@@ -12,8 +12,8 @@ services:
       - ./config/wp_php.ini:/usr/local/etc/php/conf.d/conf.ini
     environment:
       WORDPRESS_DB_HOST: cvab-mysql-server
-      WORDPRESS_DB_USER: admin
-      WORDPRESS_DB_PASSWORD: admin123
+      WORDPRESS_DB_USER: admincvab
+      WORDPRESS_DB_PASSWORD: admincvab123
       WORDPRESS_DB_NAME: wordpress_cvab
     depends_on:
       - cvab-mysql-server
