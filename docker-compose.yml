@@ -27,7 +27,7 @@ services:
       - ./wp-content/uploads.ini:/usr/local/etc/php/conf.d/uploads.ini
       - session_data:/var/lib/php/sessions
     ports:
-      - "3308:3306"
+      - "3309:3306"
     networks:
       - npm-network
     environment:
