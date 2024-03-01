@@ -1,29 +1,61 @@
-version: '3.3'
+version: '3.8'
 
 services:
   wordpress:
     image: wordpress:php7.4-apache
+    container_name: cvab_wordpress
     ports:
-      - "8000:80"
+      - "8095:80"
     volumes:
       - .:/var/www/html
+      - ./wp-content:/var/www/html/wp-content:rw,Z
+      - ./config/wp_php.ini:/usr/local/etc/php/conf.d/conf.ini
     environment:
-      WORDPRESS_DB_HOST: mysql-server
+      WORDPRESS_DB_HOST: cvab-mysql-server
       WORDPRESS_DB_USER: admin
       WORDPRESS_DB_PASSWORD: admin123
       WORDPRESS_DB_NAME: wordpress
     depends_on:
-      - mysql-server
-
-  mysql-server:
+      - cvab-mysql-server
+    networks:
+      - npm-network
+  cvab-mysql-server:
     image: mysql:latest
+    container_name: cvab-mysql-server
     volumes:
-      - db_data:/var/lib/mysql
+      - cvdb_data:/var/lib/mysql
+      - ./wp-content/uploads.ini:/usr/local/etc/php/conf.d/uploads.ini
+      - session_data:/var/lib/php/sessions
+    ports:
+      - "3308:3306"
+    networks:
+      - npm-network
     environment:
       MYSQL_ROOT_PASSWORD: root123
-      MYSQL_DATABASE: wordpress
-      MYSQL_USER: admin
-      MYSQL_PASSWORD: admin123
-
+      MYSQL_DATABASE: wordpress_cvab
+      MYSQL_USER: admincvab
+      MYSQL_PASSWORD: admincvab123
+# PhpMyAdmin service
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: wordpresscvab-phpmyadmin
+    environment:
+      PMA_HOST: cvab-mysql-server # Use the service name of your MySQL service
+      PMA_PORT: 3306 # Default MySQL port
+    ports:
+      - "8093:80" # Map port 8082 on the host to port 80 in the container
+    depends_on:
+      - cvab-mysql-server # Ensure phpMyAdmin starts after MySQL
+    # networks, etc.
+    networks:
+      - npm-network
 volumes:
-  db_data: {}
+  cvdb_data:
+    name: db_data_cvab
+    driver: local
+  session_data:
+    name: session_data_cvab
+    driver: local
+networks:
+  npm-network:
+    external: true
